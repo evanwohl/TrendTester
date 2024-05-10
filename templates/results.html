@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Test Results - TrendTester</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
 
@@ -11,7 +11,7 @@
             margin: 0;
             padding: 0;
             overflow: auto;
-            background: linear-gradient(-45deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background: linear-gradient(-45deg, #2ecc71, #1abc9c, #16a085);
             background-size: 600% 600%;
             animation: gradient 15s ease infinite;
             transition: background 1s ease;
@@ -19,7 +19,7 @@
 
         .container {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -53,7 +53,7 @@
             padding: 10px 30px;
             font-size: 18px;
             color: #fff;
-            background: linear-gradient(to right, #007BFF, #00C6FF);
+            background: linear-gradient(to right, #007BFF, #325ca8);
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -68,6 +68,16 @@
             background: linear-gradient(to right, #00C6FF, #007BFF);
             box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
             transform: scale(1.05);
+        }
+        .results {
+            margin-left: 20px;
+        }
+
+        img {
+            max-width: 70%;
+        }
+        .results p {
+            font-size: 1em;
         }
 
         @keyframes gradient {
@@ -105,16 +115,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Backtest Results</h1>
-        <img src="{{ plot_img }}" alt="Plot">
-        <div class="results">
-            <h2>Performance Metrics</h2>
-            <p>ROI: {{ roi }}%</p>
-            <p>Annualized ROI: {{ annualized_roi }}%</p>
-            <p>Max Drawdown: {{ max_drawdown_percent }}%</p>
-            <p>Volatility: {{ volatility }}</p>
+        <h1 style="position: absolute; top: 0; left: 50%; transform: translate(-50%, 0);">Backtest Results</h1>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <img src="{{ plot_img }}" alt="Plot" style="max-width: 70%; margin-top: 50px;">
+            <div class="results">
+                <h2>Performance Metrics</h2>
+                <p>Starting Capital: ${{ initial_investment }}</p>
+                <p>Final Asset Value: ${{ final_investment_value }}</p>
+                <p>ROI: {{ roi }}%</p>
+                <p>Annualized ROI: {{ annualized_roi }}%</p>
+                <p>Max Drawdown: {{ max_drawdown_percent }}%</p>
+                <p>Volatility: {{ volatility }} units</p>
+            </div>
+            <a href="/" class="btn">Back to Home</a>
         </div>
-        <a href="/" class="btn">Back to Home</a>
     </div>
 </body>
 </html>
