@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Build - EasyTest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+        .form-container {
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="number"] {
+            width: 80%;  /* Adjust this value as needed */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 0 auto;  /* Center the input field */
+            display: block;  /* Make the input field a block element */
+        }
+        .form-group input[type="text"] {
+            width: 80%;  /* Adjust this value as needed */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 0 auto;  /* Center the input field */
+            display: block;  /* Make the input field a block element */
+        }
+
+        .btn {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+            overflow: auto;
+            background: linear-gradient(-45deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 600% 600%;
+            animation: gradient 15s ease infinite;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideIn 1s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+            animation: fadeIn 2s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            color: #fff;
+            line-height: 1.8;
+            animation: fadeIn 2s;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 30px;
+            font-size: 18px;
+            color: #fff;
+            background: linear-gradient(to right, #007BFF, #00C6FF);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 2s;
+            transform: scale(1);
+            transition: transform 0.3s ease, background 1s ease, box-shadow 1s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #00C6FF, #007BFF);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Set Parameters for Your Momentum Trading Strategy</h1>
+        <form class="form-container" method="POST" action="/build">
+            <!-- Dynamically generate form fields for each indicator and its parameters -->
+            {% for indicator, (full_name, parameters) in indicators.items() %}
+            <div class="form-group">
+                <label>{{ full_name }} Parameters:</label>
+                <!-- Add form fields for each parameter needed for the current indicator -->
+                {% for parameter in parameters %}
+                <input type="number" name="{{ indicator }}_{{ parameter }}" placeholder="{{ parameter }}">
+                {% endfor %}
+                <input type="hidden" name="indicator" value="{{ indicator }}">
+            </div>
+            {% endfor %}
+            <div class="form-group">
+                <label>Input Tickers (no spaces):</label>
+                <input type="text" name="tickers" placeholder="TSLA,AAPL,MSFT">
+            </div>
+            <div class="form-group">
+                <label>Backtest Start Year:</label>
+                <input type="number" name='start_year' placeholder="2008">
+            </div>
+            <div class="form-group" style="text-align: center;">
+                <label>Submit a buy order when no position is held and</label>
+                <input type="number" name="buy_signals" value="2" style="width: 50px; display: inline-block;">
+                <label>buy signals are generated in a row.</label>
+            </div>
+
+            <div class="form-group" style="text-align: center;">
+                <label>Submit a sell order when a position is held and</label>
+                <input type="number" name="sell_signals" value="2" style="width: 50px; display: inline-block;">
+                <label>sell signals are generated in a row.</label>
+            </div>
+            <button type="submit" class="btn">Test Strategy</button>
+        </form>
+    </div>
+
+</body>
+</html>

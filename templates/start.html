@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Start - EasyTest</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 1.2em;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .form-group .checkbox-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-group .checkbox-container label {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group .checkbox-container label input {
+            margin-right: 10px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+            overflow: auto;
+            background: linear-gradient(-45deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 600% 600%;
+            animation: gradient 15s ease infinite;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideIn 1s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+            animation: fadeIn 2s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            color: #fff;
+            line-height: 1.8;
+            animation: fadeIn 2s;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 30px;
+            font-size: 18px;
+            color: #fff;
+            background: linear-gradient(to right, #007BFF, #00C6FF);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 2s;
+            transform: scale(1);
+            transition: transform 0.3s ease, background 1s ease, box-shadow 1s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #00C6FF, #007BFF);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Start Developing Your Momentum Trading Strategy</h1>
+        <p>Select the momentum indicators for your model.</p>
+        <form class="form-container" method="GET" action="/build">
+            <div class="form-group">
+                <label>Choose indicators:</label>
+                <div class="checkbox-container">
+                    <label><input type="checkbox" name="indicator" value="RSI"> Relative Strength Index (RSI)</label>
+                    <label><input type="checkbox" name="indicator" value="MACD"> Moving Average Convergence Divergence (MACD)</label>
+                    <label><input type="checkbox" name="indicator" value="SO"> Stochastic Oscillator</label>
+                    <label><input type="checkbox" name="indicator" value="CCI"> Commodity Channel Index (CCI)</label>
+                    <label><input type="checkbox" name="indicator" value="ROC"> Rate of Change (ROC)</label>
+                    <label><input type="checkbox" name="indicator" value="WR"> Williams %R (WR)</label>
+                </div>
+            </div>
+            <button type="submit" class="btn">Next Step</button>
+        </form>
+    </div>
+</body>
+</html>
