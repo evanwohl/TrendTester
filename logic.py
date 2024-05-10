@@ -79,9 +79,20 @@ def calculate_cci(df, args):
     :return: a pandas DataFrame with columns 'Close', 'High', 'Low', 'CCI'
     """
     tp = (df['High'] + df['Low'] + df['Close']) / 3
-    sma = tp.rolling(window=int(args['CCI_Period'])).mean()
+    sma = tp.rolling(window=int(args['CCI_Periods'])).mean()
     mean_deviation = tp.rolling(window=int(args['CCI_Periods'])).apply(lambda x: abs(x - x.mean()).mean())
     df['CCI'] = (tp - sma) / (0.015 * mean_deviation)
+    return df
+def calculate_wr(df, args):
+    """
+    Calculate the Williams %R for the given data
+    :param df: a pandas DataFrame with columns 'Close', 'High', 'Low'
+    :param period: a positive integer representing the period for Williams %R
+    :return: a pandas DataFrame with columns 'Close', 'High', 'Low', 'Williams %R'
+    """
+    df['Highest High'] = df['High'].rolling(window=int(args['WR_Period'])).max()
+    df['Lowest Low'] = df['Low'].rolling(window=int(args['WR_Period'])).min()
+    df['WR'] = ((df['Highest High'] - df['Close']) / (df['Highest High'] - df['Lowest Low'])) * -100
     return df
 def prep_data_calculate_indicators(ticker, indicators, start_year, args):
     """
@@ -98,14 +109,16 @@ def backtest_strategy(df, args, ticker):
     df = df.dropna()
     params = {}
     so = False
+    macd = False
     for arg in args:
+        if 'MACD' in arg:
+            macd = True
         if 'Buy' in arg:
             if 'SO' in arg:
                 so = True
                 params['%D'] = 1
             else:
                 params[arg.split("_")[0]] = 1
-            print(params)
     if so:
         args['%D_Buy'] = args['SO_Buy']
         args['%D_Sell'] = args['SO_Sell']
@@ -119,6 +132,9 @@ def backtest_strategy(df, args, ticker):
             for param in params:
                 if row[param] > int(args[f"{param}_Sell"]):
                     signal = False
+            if macd:
+                if row['MACD'] < row['Signal Line']:
+                    signal = False
             balance.append(row['Close'] * current_position)
             if signal:
                 print(f"SELL {current_position} SHARES {ticker} AT ${row['Close']} ON {index}")
@@ -126,8 +142,10 @@ def backtest_strategy(df, args, ticker):
         else:
             signal = True
             for param in params:
-                print(param)
                 if row[param] < int(args[f"{param}_Buy"]):
+                    signal = False
+            if macd:
+                if row['MACD'] > row['Signal Line']:
                     signal = False
             balance.append(balance[-1])
             if signal:
@@ -166,7 +184,7 @@ fnc = {
     "SO": calculate_stochastic_oscillator,
     "CCI": calculate_cci,
     "ROC": calculate_roc,
-    "WR": calculate_roc
+    "WR": calculate_wr
 }
 if __name__ == '__main__':
     tickers = ['AAPL', 'MSFT']

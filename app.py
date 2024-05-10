@@ -45,10 +45,14 @@ def build():
         print(roi, annualized_roi, max_drawdown_percent)
         plot_img = logic.interepret_results(portfolio_value)
         volatility = logic.calculate_volatility(portfolio_value)
+        initial_investment = 100 * len(tickers)
+        final_investment_value = round(portfolio_value[-1], 2)
         return render_template('results.html', plot_img=plot_img,
-                               roi=roi*100, annualized_roi=annualized_roi*100,
-                               max_drawdown_percent=max_drawdown_percent,
-                               volatility=volatility)
+                               roi=round(roi*100, 2), annualized_roi=round(annualized_roi*100, 2),
+                               max_drawdown_percent=round(max_drawdown_percent, 2),
+                               volatility=round(volatility, 2),
+                               initial_investment=initial_investment,
+                               final_investment_value=final_investment_value)
     else:
         indicators = request.args.getlist('indicator')
         if len(indicators) == 0:
