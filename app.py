@@ -14,7 +14,6 @@ def start():
 def build():
     if request.method == 'POST':
         tickers = request.form['tickers'].split(',')
-        print(request.form.to_dict())
         signal_dict = {}
         for item in request.form:
             if 'Signal' in item:
@@ -47,12 +46,12 @@ def build():
         average_loss = sum([sum(loss)for loss in losses]) / sum(len(loss) for loss in losses)
         win_rate = sum([len(win) for win in wins]) / (sum([len(win) for win in wins]) + sum([len(loss) for loss in losses]))
         num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
-        print(f"Average Win: {average_win}")
-        print(f"Average Loss: {average_loss}")
-        print(f"Win Rate: {win_rate}")
-        print(f"Number of Trades: {num_trades}")
-
+        wins_ct = [item for sublist in wins for item in sublist]
+        losses_ct = [item for sublist in losses for item in sublist]
+        ct = wins_ct + [-1 * loss for loss in losses_ct]
+        distribution_graph = logic.plot_pnl_distribution(ct)
         return render_template('results.html', plot_img=plot_img,
+                               distribution_graph=distribution_graph,
                                roi=round(roi*100, 2), annualized_roi=round(annualized_roi*100, 2),
                                initial_investment=initial_investment,
                                final_investment_value=final_investment_value,
@@ -60,9 +59,6 @@ def build():
                                average_loss=round(average_loss, 2),
                                win_rate=round(win_rate*100, 2),
                                num_trades=num_trades*2)
-
-
-
     else:
         indicators = request.args.getlist('indicator')
         if len(indicators) == 0:

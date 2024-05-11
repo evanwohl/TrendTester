@@ -25,11 +25,21 @@
             height: auto;
             text-align: center;
             padding: 20px;
-            max-width: 800px;
+            max-width: 1800px;
             margin: 0 auto;
             animation: slideIn 1s ease;
             transition: transform 1s ease;
             position: relative;
+            flex-direction: row;
+        }
+        .images, .results {
+            flex: 1;  /* Each child div takes up half the width of the container */
+            padding: 20px;  /* Add some padding around the content */
+        }
+
+        img {
+            width: 100%;  /* Images take up the full width of their container */
+            height: auto;  /* Maintain the original aspect ratio */
         }
 
         h1 {
@@ -81,6 +91,33 @@
             font-size: 1em;
         }
 
+        .clickable-image {
+            transition: transform 0.5s;
+        }
+
+        .clickable-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .clickable-image.expanded {
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .clickable-image.expanded img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
         @keyframes gradient {
             0% {
                 background-position: 0% 50%;
@@ -116,22 +153,38 @@
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <img src="{{ plot_img }}" alt="Plot" style="max-width: 85%; margin-top: 50px;">
-            <div class="results">
-                <h2>Performance Metrics</h2>
-                <p>Starting Capital: ${{ initial_investment }}</p>
-                <p>Final Asset Value: ${{ final_investment_value }}</p>
-                <p>ROI: {{ roi }}%</p>
-                <p>Annualized ROI: {{ annualized_roi }}%</p>
-                <p>Average Win: {{ average_win }}</p>
-                <p>Average Loss: {{ average_loss }}</p>
-                <p>Win Rate: {{ win_rate }}%</p>
-                <p>Number of Trades: {{ num_trades }}</p>
-                <a href="/start" class="btn">Back to Start</a>
+        <div class="images">
+            <div class="clickable-image">
+                <img src="{{ plot_img }}" alt="Plot">
             </div>
-
+            <div class="clickable-image">
+                <img src="{{ distribution_graph }}" alt="Plot">
+            </div>
+        </div>
+        <div class="results">
+            <h2>Performance Metrics</h2>
+            <p>Starting Capital: ${{ initial_investment }}</p>
+            <p>Final Asset Value: ${{ final_investment_value }}</p>
+            <p>ROI: {{ roi }}%</p>
+            <p>Annualized ROI: {{ annualized_roi }}%</p>
+            <p>Average Win: {{ average_win }}</p>
+            <p>Average Loss: {{ average_loss }}</p>
+            <p>Win Rate: {{ win_rate }}%</p>
+            <p>Number of Trades: {{ num_trades }}</p>
+            <a href="/start" class="btn">Back to Start</a>
         </div>
     </div>
+    <script>
+        // Get all the clickable images
+        var images = document.querySelectorAll('.clickable-image');
+
+        // Add a click event listener to each image
+        images.forEach(function(image) {
+            image.addEventListener('click', function() {
+                // Toggle the 'expanded' class
+                this.classList.toggle('expanded');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -164,7 +164,6 @@ def backtest_strategy(df, args, ticker):
                         break
             balance.append(row['Close'] * current_position)
             if signal:
-                print(f"SELL {current_position} SHARES {ticker} AT ${row['Close']} ON {index}")
                 if row['Close'] * current_position > balance_at_last_trade:
                     wins.append(row['Close'] * current_position - balance_at_last_trade)
                 else:
@@ -183,7 +182,6 @@ def backtest_strategy(df, args, ticker):
                         break
             balance.append(balance[-1])
             if signal:
-                print(f"BUY {balance[-1] / row['Close']} SHARES {ticker} AT ${row['Close']} ON {index}")
                 current_position = balance[-1] / row['Close']
     if current_position > 0:
         if balance_at_last_trade < balance[-1]:
@@ -220,6 +218,26 @@ def plot_results(portfolio_balance):
     buf.seek(0)
     string = base64.b64encode(buf.read()).decode('utf-8')
     return 'data:image/png;base64,' + string.rstrip()
+
+def plot_pnl_distribution(trade_results):
+    """
+    Create a plot of the profit/loss distribution of the trades
+    :param trade_results: a list of floats representing the profit/loss of each trade
+    :return:
+    """
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.hist(trade_results, bins=75, color='blue', alpha=0.7, edgecolor='black')
+    plt.xlabel('Profit/Loss', fontsize=12)
+    plt.ylabel('Frequency', fontsize=12)
+    plt.title('Profit/Loss Distribution of Trades', fontsize=14)
+    ax.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read()).decode('utf-8')
+    return 'data:image/png;base64,' + string.rstrip()
+
 fnc = {
     "RSI": calculate_rsi,
     "MACD": calculate_macd,
