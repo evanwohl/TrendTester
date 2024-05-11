@@ -53,7 +53,6 @@ def build():
             losses_ct = [item for sublist in losses for item in sublist]
             ct = wins_ct + [-1 * loss for loss in losses_ct]
             distribution_graph = logic.plot_pnl_distribution(ct)
-            print(logic.calculate_sharpe_ratio(portfolio_value, start_year))
             roi_class = 'positive' if roi >= 0 else 'negative'
             return render_template('results.html', plot_img=plot_img,
                                    distribution_graph=distribution_graph,
