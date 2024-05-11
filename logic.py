@@ -159,9 +159,16 @@ def backtest_strategy(df, args, ticker):
                     signal = False
             if signal:
                 for param in params:
-                    if row[param] > int(args[f"{param}_Sell"]):
-                        signal = False
-                        break
+                    signal_value = args[f"{param}_Sell"]
+                    value = int(signal_value[1:])
+                    if '>' in signal_value:
+                        if row[param] < value:
+                            signal = False
+                            break
+                    else:
+                        if row[param] > value:
+                            signal = False
+                            break
             balance.append(row['Close'] * current_position)
             if signal:
                 if row['Close'] * current_position > balance_at_last_trade:
@@ -177,9 +184,16 @@ def backtest_strategy(df, args, ticker):
                     signal = False
             if signal:
                 for param in params:
-                    if row[param] < int(args[f"{param}_Buy"]):
-                        signal = False
-                        break
+                    signal_value = args[f"{param}_Buy"]
+                    value = int(signal_value[1:])
+                    if '>' in signal_value:
+                        if row[param] < value:
+                            signal = False
+                            break
+                    else:
+                        if row[param] > value:
+                            signal = False
+                            break
             balance.append(balance[-1])
             if signal:
                 current_position = balance[-1] / row['Close']

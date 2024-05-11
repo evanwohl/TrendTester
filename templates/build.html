@@ -163,7 +163,7 @@ document.querySelector('.btn').addEventListener('click', function() {
             <label>{{ full_name }} Parameters:</label>
             <!-- Add form fields for each parameter needed for the current indicator -->
             {% for parameter in parameters %}
-            <input type="number" name="{{ indicator }}_{{ parameter }}" placeholder="{{ parameter }}" required>
+            <input type="text" name="{{ indicator }}_{{ parameter }}" placeholder="{{ parameter }}" required>
             {% endfor %}
             <input type="hidden" name="indicator" value="{{ indicator }}">
         </div>
