@@ -14,7 +14,28 @@ def get_stock_price(ticker, start_year=2008):
     stock = yf.Ticker(ticker)
     stock_data = stock.history(start=f"{str(start_year)}-01-01")
     return stock_data[['Close', 'High', 'Low']]
+def get_risk_free_rate(start_year=2008):
+    """
+    Get the risk-free rate for the given start year
+    :param start_year: an integer representing the start year
+    :return: a float representing the risk-free rate
+    """
+    risk_free_rate = yf.Ticker('^IRX')
+    risk_free_data = risk_free_rate.history(start=f"{str(start_year)}-01-01")
+    return risk_free_data['Close'].mean()
 
+def calculate_sharpe(portfolio_value, risk_free_rate):
+    """
+    Calculate the Sharpe ratio for the given portfolio value and risk-free rate
+    :param portfolio_value: a list of floats representing the portfolio value over time
+    :param risk_free_rate: a float representing the risk-free rate
+    :return: a float representing the Sharpe ratio
+    """
+    returns = [(portfolio_value[i] - portfolio_value[i - 1]) for i in range(1, len(portfolio_value))]
+    mean_return = np.mean(returns)
+    std_dev = np.std(returns)
+    sharpe = (mean_return - risk_free_rate) / std_dev
+    return sharpe
 def calculate_rsi(df, args):
     """
     Calculate the Relative Strength Index for the given data
@@ -127,32 +148,49 @@ def backtest_strategy(df, args, ticker):
         del args['SO_Sell']
     balance = [100]
     current_position = 0
+    balance_at_last_trade = 100
+    wins = []
+    losses = []
     for index, row in df.iterrows():
         if current_position > 0:
             signal = True
-            for param in params:
-                if row[param] > int(args[f"{param}_Sell"]):
-                    signal = False
             if macd:
                 if row['MACD'] < row['Signal Line']:
                     signal = False
+            if signal:
+                for param in params:
+                    if row[param] > int(args[f"{param}_Sell"]):
+                        signal = False
+                        break
             balance.append(row['Close'] * current_position)
             if signal:
                 print(f"SELL {current_position} SHARES {ticker} AT ${row['Close']} ON {index}")
+                if row['Close'] * current_position > balance_at_last_trade:
+                    wins.append(row['Close'] * current_position - balance_at_last_trade)
+                else:
+                    losses.append(balance_at_last_trade - row['Close'] * current_position)
+                balance_at_last_trade = row['Close'] * current_position
                 current_position = 0
         else:
             signal = True
-            for param in params:
-                if row[param] < int(args[f"{param}_Buy"]):
-                    signal = False
             if macd:
                 if row['MACD'] > row['Signal Line']:
                     signal = False
+            if signal:
+                for param in params:
+                    if row[param] < int(args[f"{param}_Buy"]):
+                        signal = False
+                        break
             balance.append(balance[-1])
             if signal:
                 print(f"BUY {balance[-1] / row['Close']} SHARES {ticker} AT ${row['Close']} ON {index}")
                 current_position = balance[-1] / row['Close']
-    return balance
+    if current_position > 0:
+        if balance_at_last_trade < balance[-1]:
+            wins.append(balance[-1] - balance_at_last_trade)
+        else:
+            losses.append(balance_at_last_trade - balance[-1])
+    return balance, wins, losses
 
 def calculate_volatility(portfolio_balance):
     """
@@ -171,7 +209,6 @@ def plot_results(portfolio_balance):
     portfolio_balance['50 day avg'] = portfolio_balance['Balance'].rolling(window=50).mean()
     fig, ax = plt.subplots(figsize=(10, 6))
     portfolio_balance['Balance'].plot(color='blue', linestyle='-', linewidth=1, label='Portfolio Balance')
-    portfolio_balance['50 day avg'].plot(color='orange', linestyle='-', linewidth=1, label='50-point Moving Avg')
     plt.xlabel('Data Point', fontsize=12)
     plt.ylabel('Balance', fontsize=12)
     plt.title('Portfolio Balance Over Time', fontsize=14)

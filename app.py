@@ -20,39 +20,49 @@ def build():
             if 'Signal' in item:
                 signal_dict[item.split(" ")[0]] = request.form[item]
         balances = []
+        wins = []
+        losses = []
         for ticker in tickers:
             data = logic.prep_data_calculate_indicators(ticker,
                                                         request.form.getlist('indicator'),
                                                         int(request.form['start_year']),
                                                         request.form.to_dict())
-            balance = logic.backtest_strategy(data, signal_dict, ticker)
+            balance, win, loss = logic.backtest_strategy(data, signal_dict, ticker)
             balances.append(balance)
+            wins.append(win)
+            losses.append(loss)
         max_len = max([len(balance) for balance in balances])
-
         for i in range(len(balances)):
             balances[i] = ([100] * (max_len - len(balances[i]))) + balances[i]
         portfolio_value = [sum([balance[i] for balance in balances]) for i in range(max_len)]
-        max_drawdown_percent = 0
-        for i in range(len(portfolio_value)):
-            for j in range(i, len(portfolio_value)):
-                max_drawdown_percent = max(max_drawdown_percent,
-                                           (portfolio_value[j] -
-                                            portfolio_value[i]) / portfolio_value[i])
         roi = ((portfolio_value[-1] - portfolio_value[0]) / portfolio_value[0])
         start_year = int(request.form['start_year'])
         current_year = datetime.now().year
         num_years = current_year - start_year
         annualized_roi = (1 + roi) ** (1 / num_years) - 1
         plot_img = logic.plot_results(portfolio_value)
-        volatility = logic.calculate_volatility(portfolio_value)
         initial_investment = 100 * len(tickers)
         final_investment_value = round(portfolio_value[-1], 2)
+        average_win = sum([sum(win) for win in wins]) / sum(len(win) for win in wins)
+        average_loss = sum([sum(loss)for loss in losses]) / sum(len(loss) for loss in losses)
+        win_rate = sum([len(win) for win in wins]) / (sum([len(win) for win in wins]) + sum([len(loss) for loss in losses]))
+        num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
+        print(f"Average Win: {average_win}")
+        print(f"Average Loss: {average_loss}")
+        print(f"Win Rate: {win_rate}")
+        print(f"Number of Trades: {num_trades}")
+
         return render_template('results.html', plot_img=plot_img,
                                roi=round(roi*100, 2), annualized_roi=round(annualized_roi*100, 2),
-                               max_drawdown_percent=round(max_drawdown_percent, 2),
-                               volatility=round(volatility, 2),
                                initial_investment=initial_investment,
-                               final_investment_value=final_investment_value)
+                               final_investment_value=final_investment_value,
+                               average_win=round(average_win, 2),
+                               average_loss=round(average_loss, 2),
+                               win_rate=round(win_rate*100, 2),
+                               num_trades=num_trades*2)
+
+
+
     else:
         indicators = request.args.getlist('indicator')
         if len(indicators) == 0:
