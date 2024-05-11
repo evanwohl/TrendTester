@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error - TrendTester</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            background: linear-gradient(-45deg, #2ecc71, #1abc9c, #16a085);
+            background-size: 600% 600%;
+            animation: gradient 15s ease infinite;
+            transition: background 1s ease;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: auto;
+            text-align: center;
+            padding: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+            animation: slideIn 1s ease;
+            transition: transform 1s ease;
+            position: relative;
+            flex-direction: row;
+        }
+        .images, .results {
+            flex: 1;  /* Each child div takes up half the width of the container */
+            padding: 20px;  /* Add some padding around the content */
+        }
+
+        img {
+            width: 100%;  /* Images take up the full width of their container */
+            height: auto;  /* Maintain the original aspect ratio */
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+            animation: fadeIn 2s;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: color 1s ease;
+        }
+
+        p {
+            color: #fff;
+            line-height: 1.8;
+            animation: fadeIn 2s;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            transition: color 1s ease;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 30px;
+            font-size: 18px;
+            color: #fff;
+            background: linear-gradient(to right, #007BFF, #325ca8);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 2s;
+            transform: scale(1);
+            transition: transform 0.3s ease, background 1s ease, box-shadow 1s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #00C6FF, #007BFF);
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+        .results {
+            margin-left: 20px;
+        }
+
+        img {
+            max-width: 70%;
+        }
+        .results p {
+            font-size: 1em;
+        }
+
+        .clickable-image {
+            transition: transform 0.5s;
+        }
+
+        .clickable-image img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .clickable-image.expanded {
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .clickable-image.expanded img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="images">
+        <h1>Error</h1>
+        <p>There was an error while processing your request. Please check your inputs for correctness and try again later.</p>
+        <a href="/start" class="btn">Go back</a>
+    </div>
+</body>
+</html>

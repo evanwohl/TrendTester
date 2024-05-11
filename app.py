@@ -13,52 +13,56 @@ def start():
 @app.route('/build', methods=['GET', 'POST'])
 def build():
     if request.method == 'POST':
-        tickers = request.form['tickers'].split(',')
-        signal_dict = {}
-        for item in request.form:
-            if 'Signal' in item:
-                signal_dict[item.split(" ")[0]] = request.form[item]
-        balances = []
-        wins = []
-        losses = []
-        for ticker in tickers:
-            data = logic.prep_data_calculate_indicators(ticker,
-                                                        request.form.getlist('indicator'),
-                                                        int(request.form['start_year']),
-                                                        request.form.to_dict())
-            balance, win, loss = logic.backtest_strategy(data, signal_dict, ticker)
-            balances.append(balance)
-            wins.append(win)
-            losses.append(loss)
-        max_len = max([len(balance) for balance in balances])
-        for i in range(len(balances)):
-            balances[i] = ([100] * (max_len - len(balances[i]))) + balances[i]
-        portfolio_value = [sum([balance[i] for balance in balances]) for i in range(max_len)]
-        roi = ((portfolio_value[-1] - portfolio_value[0]) / portfolio_value[0])
-        start_year = int(request.form['start_year'])
-        current_year = datetime.now().year
-        num_years = current_year - start_year
-        annualized_roi = (1 + roi) ** (1 / num_years) - 1
-        plot_img = logic.plot_results(portfolio_value)
-        initial_investment = 100 * len(tickers)
-        final_investment_value = round(portfolio_value[-1], 2)
-        average_win = sum([sum(win) for win in wins]) / sum(len(win) for win in wins)
-        average_loss = sum([sum(loss)for loss in losses]) / sum(len(loss) for loss in losses)
-        win_rate = sum([len(win) for win in wins]) / (sum([len(win) for win in wins]) + sum([len(loss) for loss in losses]))
-        num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
-        wins_ct = [item for sublist in wins for item in sublist]
-        losses_ct = [item for sublist in losses for item in sublist]
-        ct = wins_ct + [-1 * loss for loss in losses_ct]
-        distribution_graph = logic.plot_pnl_distribution(ct)
-        return render_template('results.html', plot_img=plot_img,
-                               distribution_graph=distribution_graph,
-                               roi=round(roi*100, 2), annualized_roi=round(annualized_roi*100, 2),
-                               initial_investment=initial_investment,
-                               final_investment_value=final_investment_value,
-                               average_win=round(average_win, 2),
-                               average_loss=round(average_loss, 2),
-                               win_rate=round(win_rate*100, 2),
-                               num_trades=num_trades*2)
+        try:
+            tickers = request.form['tickers'].split(',')
+            signal_dict = {}
+            for item in request.form:
+                if 'Signal' in item:
+                    signal_dict[item.split(" ")[0]] = request.form[item]
+            balances = []
+            wins = []
+            losses = []
+            for ticker in tickers:
+                data = logic.prep_data_calculate_indicators(ticker,
+                                                            request.form.getlist('indicator'),
+                                                            int(request.form['start_year']),
+                                                            request.form.to_dict())
+                balance, win, loss = logic.backtest_strategy(data, signal_dict, ticker)
+                balances.append(balance)
+                wins.append(win)
+                losses.append(loss)
+            max_len = max([len(balance) for balance in balances])
+            for i in range(len(balances)):
+                balances[i] = ([100] * (max_len - len(balances[i]))) + balances[i]
+            portfolio_value = [sum([balance[i] for balance in balances]) for i in range(max_len)]
+            roi = ((portfolio_value[-1] - portfolio_value[0]) / portfolio_value[0])
+            start_year = int(request.form['start_year'])
+            current_year = datetime.now().year
+            num_years = current_year - start_year
+            annualized_roi = (1 + roi) ** (1 / num_years) - 1
+            plot_img = logic.plot_results(portfolio_value)
+            initial_investment = 100 * len(tickers)
+            final_investment_value = round(portfolio_value[-1], 2)
+            average_win = sum([sum(win) for win in wins]) / sum(len(win) for win in wins)
+            average_loss = sum([sum(loss)for loss in losses]) / sum(len(loss) for loss in losses)
+            win_rate = sum([len(win) for win in wins]) / (sum([len(win) for win in wins]) + sum([len(loss) for loss in losses]))
+            num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
+            wins_ct = [item for sublist in wins for item in sublist]
+            losses_ct = [item for sublist in losses for item in sublist]
+            ct = wins_ct + [-1 * loss for loss in losses_ct]
+            distribution_graph = logic.plot_pnl_distribution(ct)
+            return render_template('results.html', plot_img=plot_img,
+                                   distribution_graph=distribution_graph,
+                                   roi=round(roi*100, 2), annualized_roi=round(annualized_roi*100, 2),
+                                   initial_investment=initial_investment,
+                                   final_investment_value=final_investment_value,
+                                   average_win=round(average_win, 2),
+                                   average_loss=round(average_loss, 2),
+                                   win_rate=round(win_rate*100, 2),
+                                   num_trades=num_trades*2)
+        except Exception as e:
+            print(e)
+            return render_template('error.html')
     else:
         indicators = request.args.getlist('indicator')
         if len(indicators) == 0:
