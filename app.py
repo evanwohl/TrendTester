@@ -53,6 +53,8 @@ def build():
             losses_ct = [item for sublist in losses for item in sublist]
             ct = wins_ct + [-1 * loss for loss in losses_ct]
             distribution_graph = logic.plot_pnl_distribution(ct)
+            print(logic.calculate_sharpe_ratio(portfolio_value, start_year))
+            roi_class = 'positive' if roi >= 0 else 'negative'
             return render_template('results.html', plot_img=plot_img,
                                    distribution_graph=distribution_graph,
                                    roi=round(roi*100, 2), annualized_roi=round(annualized_roi*100, 2),
@@ -61,7 +63,8 @@ def build():
                                    average_win=round(average_win, 2),
                                    average_loss=round(average_loss, 2),
                                    win_rate=round(win_rate*100, 2),
-                                   num_trades=num_trades*2)
+                                   num_trades=num_trades*2,
+                                   roi_class=roi_class)
         except Exception as e:
             print(e)
             return render_template('error.html')

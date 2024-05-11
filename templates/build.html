@@ -3,144 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>Build - TrendTester</title>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
-        .form-container {
-            background-color: #f2f2f2;
-            padding: 20px;
-            border-radius: 5px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .form-group input[type="number"] {
-            width: 80%;  /* Adjust this value as needed */
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin: 0 auto;  /* Center the input field */
-            display: block;  /* Make the input field a block element */
-        }
-        .form-group input[type="text"] {
-            width: 80%;  /* Adjust this value as needed */
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin: 0 auto;  /* Center the input field */
-            display: block;  /* Make the input field a block element */
-        }
-
-        .btn {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background-color: #0056b3;
-        }
-
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: auto;
-            overflow: auto;
-            background: linear-gradient(-45deg, #2ecc71, #1abc9c, #16a085);
-            background-size: 600% 600%;
-            animation: gradient 15s ease infinite;
+            background-color: #121212;
         }
 
         .container {
             text-align: center;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            animation: slideIn 1s ease;
+            padding: 40px;
+            max-width: 700px;
+            background: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 8px 26px rgba(0,255,255,0.2);
+            backdrop-filter: blur(10px);
         }
 
         h1 {
             font-size: 2.5em;
-            color: #fff;
-            animation: fadeIn 2s;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #0fd;
+            margin-bottom: 20px;
+            font-weight: 900;
         }
 
-        p {
+        .form-container {
+            background-color: transparent;
+            padding: 20px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        .note {
+            color: #ccc;
+
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #ccc;
+        }
+
+        .form-group input[type="text"], .form-group input[type="number"] {
+            width: 80%;
+            padding: 10px;
+            border: 2px solid #0fd;
+            border-radius: 5px;
+            background: transparent;
             color: #fff;
-            line-height: 1.8;
-            animation: fadeIn 2s;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            display: block;
+            margin: 0 auto;
         }
 
         .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 30px;
-            font-size: 18px;
-            color: #fff;
-            background: linear-gradient(to right, #007BFF, #325ca8);
+            font-size: 20px;
+            font-weight: 700;
+            color: #121212;
+            background: linear-gradient(45deg, #06f, #0fd);
             border: none;
             border-radius: 50px;
+            padding: 12px 36px;
             cursor: pointer;
-            text-decoration: none;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 2s;
-            transform: scale(1);
-            transition: transform 0.3s ease, background 1s ease, box-shadow 1s ease;
+            box-shadow: 0 4px 13px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
 
         .btn:hover {
-            background: linear-gradient(to right, #00C6FF, #007BFF);
-            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
-            transform: scale(1.05);
+            background: linear-gradient(45deg, #0fd, #06f);
+            box-shadow: 0 6px 20px rgba(0,255,255,0.5);
+            transform: translateY(-3px);
         }
 
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+        #loading {
+            display: none;
+            color: #0fd;
         }
 
-        @keyframes slideIn {
-            0% {
-                transform: translateY(-50px);
-                opacity: 0;
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+                width: 90%;
             }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
 
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
+            h1, p {
+                font-size: 16px;
             }
-            100% {
-                opacity: 1;
+
+            .form-group label {
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 10px 28px;
+                font-size: 16px;
             }
         }
     </style>
@@ -157,11 +125,9 @@ document.querySelector('.btn').addEventListener('click', function() {
     <div class="container">
         <h1>Set Parameters for Your Momentum Trading Strategy</h1>
         <form class="form-container" method="POST" action="/build">
-        <!-- Dynamically generate form fields for each indicator and its parameters -->
         {% for indicator, (full_name, parameters) in indicators.items() %}
         <div class="form-group">
             <label>{{ full_name }} Parameters:</label>
-            <!-- Add form fields for each parameter needed for the current indicator -->
             {% for parameter in parameters %}
             <input type="text" name="{{ indicator }}_{{ parameter }}" placeholder="{{ parameter }}" required>
             {% endfor %}
@@ -180,10 +146,9 @@ document.querySelector('.btn').addEventListener('click', function() {
         <div id="loading" style="display: none;">
             <p> id="loading-message">Data being gathered...</p>
         </div>
-        <p style="color: #000000; margin-top: 20px;">
-            Note: For signal inputs, use the > and < symbols. For example, a buy signal above an indicator value of 75 is input as >75.
+        <p class="note">
+            <strong>Note: For signal inputs, use the > and < symbols. For example, a buy signal above an indicator value of 75 is input as >75.</strong>
         </p>
-
     </form>
     </div>
 

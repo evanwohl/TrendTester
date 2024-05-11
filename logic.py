@@ -120,6 +120,36 @@ def prep_data_calculate_indicators(ticker, indicators, start_year, args):
         data = fnc[indicator](data, args)
     return data
 
+
+def get_average_risk_free_rate(start_year):
+    """
+    Fetches the average risk-free rate from the 13-week US Treasury Bill over a specified period using yfinance.
+
+    :param start_date: Start date in 'YYYY-MM-DD' format.
+    :param end_date: End date in 'YYYY-MM-DD' format.
+    :return: Average risk-free rate as a float.
+    """
+    tbill = yf.Ticker("^IRX")
+    hist = tbill.history(start=f"{start_year}-01-01")
+    return hist['Close'].mean() / 100
+
+
+def calculate_sharpe_ratio(portfolio_values, start_year):
+    """
+    Calculate the Sharpe Ratio for a given list of portfolio values and risk-free rate.
+
+    :param portfolio_values: List of integers where each entry is the portfolio value for a trading day.
+    :param risk_free_rate: Annual risk-free rate, expressed as a decimal.
+    :return: The Sharpe Ratio as a float.
+    """
+    yearly_portfolio_values = [portfolio_values[i] for i in range(0, len(portfolio_values), 252)]
+    returns = np.diff(yearly_portfolio_values) / yearly_portfolio_values[:-1]
+    mean_return = np.mean(returns)
+    std_deviation = np.std(returns)
+    adjusted_return = mean_return - get_risk_free_rate(start_year)
+    sharpe_ratio = adjusted_return / std_deviation if std_deviation != 0 else 0
+
+    return sharpe_ratio
 def backtest_strategy(df, args, ticker):
     """
     Backtest the trading strategy using the given data and strategy parameters
@@ -231,6 +261,7 @@ def plot_results(portfolio_balance):
     plt.savefig(buf, format='png')
     buf.seek(0)
     string = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close()
     return 'data:image/png;base64,' + string.rstrip()
 
 def plot_pnl_distribution(trade_results):
@@ -250,6 +281,7 @@ def plot_pnl_distribution(trade_results):
     plt.savefig(buf, format='png')
     buf.seek(0)
     string = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close()
     return 'data:image/png;base64,' + string.rstrip()
 
 fnc = {
