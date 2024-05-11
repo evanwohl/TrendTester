@@ -22,13 +22,14 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: auto;
             text-align: center;
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
             animation: slideIn 1s ease;
             transition: transform 1s ease;
+            position: relative;
         }
 
         h1 {
@@ -115,9 +116,8 @@
 </head>
 <body>
     <div class="container">
-        <h1 style="position: absolute; top: 0; left: 50%; transform: translate(-50%, 0);">Backtest Results</h1>
         <div style="display: flex; flex-direction: column; align-items: center;">
-            <img src="{{ plot_img }}" alt="Plot" style="max-width: 70%; margin-top: 50px;">
+            <img src="{{ plot_img }}" alt="Plot" style="max-width: 85%; margin-top: 50px;">
             <div class="results">
                 <h2>Performance Metrics</h2>
                 <p>Starting Capital: ${{ initial_investment }}</p>
@@ -126,8 +126,9 @@
                 <p>Annualized ROI: {{ annualized_roi }}%</p>
                 <p>Max Drawdown: {{ max_drawdown_percent }}%</p>
                 <p>Volatility: {{ volatility }} units</p>
+                <a href="/start" class="btn">Back to Start</a>
             </div>
-            <a href="/" class="btn">Back to Home</a>
+
         </div>
     </div>
 </body>

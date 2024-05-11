@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request
 import logic
 app = Flask(__name__)
 @app.route('/')
@@ -22,7 +21,10 @@ def build():
                 signal_dict[item.split(" ")[0]] = request.form[item]
         balances = []
         for ticker in tickers:
-            data = logic.prep_data_calculate_indicators(ticker, request.form.getlist('indicator'), int(request.form['start_year']), request.form.to_dict())
+            data = logic.prep_data_calculate_indicators(ticker,
+                                                        request.form.getlist('indicator'),
+                                                        int(request.form['start_year']),
+                                                        request.form.to_dict())
             balance = logic.backtest_strategy(data, signal_dict, ticker)
             balances.append(balance)
         max_len = max([len(balance) for balance in balances])
@@ -36,14 +38,12 @@ def build():
                 max_drawdown_percent = max(max_drawdown_percent,
                                            (portfolio_value[j] -
                                             portfolio_value[i]) / portfolio_value[i])
-        print(max_drawdown_percent)
         roi = ((portfolio_value[-1] - portfolio_value[0]) / portfolio_value[0])
         start_year = int(request.form['start_year'])
         current_year = datetime.now().year
         num_years = current_year - start_year
         annualized_roi = (1 + roi) ** (1 / num_years) - 1
-        print(roi, annualized_roi, max_drawdown_percent)
-        plot_img = logic.interepret_results(portfolio_value)
+        plot_img = logic.plot_results(portfolio_value)
         volatility = logic.calculate_volatility(portfolio_value)
         initial_investment = 100 * len(tickers)
         final_investment_value = round(portfolio_value[-1], 2)
@@ -65,8 +65,10 @@ def build():
             "ROC": ("Rate of Change", ["Period", "Buy Signal", "Sell Signal"]),
             "WR": ("Williams %R", ["Period", "Buy Signal", "Sell Signal"]),
         }
-        selected_indicator_parameters = {indicator: indicator_parameters[indicator] for indicator in indicators}
-        return render_template('build.html', indicators=selected_indicator_parameters)
+        selected_indicator_parameters = {
+            indicator: indicator_parameters[indicator] for indicator in indicators}
+        return render_template('build.html',
+                               indicators=selected_indicator_parameters)
 
 
 if __name__ == '__main__':

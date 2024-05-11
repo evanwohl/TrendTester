@@ -1,12 +1,6 @@
-import urllib
-import matplotlib.dates as mdates
-import matplotlib.ticker as ticker
-from datetime import datetime, timedelta
-
 import numpy as np
 import pandas as pd
 import yfinance as yf
-import pandas
 import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
@@ -106,6 +100,13 @@ def prep_data_calculate_indicators(ticker, indicators, start_year, args):
     return data
 
 def backtest_strategy(df, args, ticker):
+    """
+    Backtest the trading strategy using the given data and strategy parameters
+    :param df: a pandas dataframe containing the stock data and indicator values
+    :param args: a dictionary containing the strategy parameters
+    :param ticker: a string representing the stock ticker
+    :return: a list of floats representing the portfolio balance over time
+    """
     df = df.dropna()
     params = {}
     so = False
@@ -151,7 +152,6 @@ def backtest_strategy(df, args, ticker):
             if signal:
                 print(f"BUY {balance[-1] / row['Close']} SHARES {ticker} AT ${row['Close']} ON {index}")
                 current_position = balance[-1] / row['Close']
-    print(balance)
     return balance
 
 def calculate_volatility(portfolio_balance):
@@ -161,7 +161,12 @@ def calculate_volatility(portfolio_balance):
     :return: a float representing the volatility of the portfolio
     """
     return np.std(portfolio_balance)
-def interepret_results(portfolio_balance):
+def plot_results(portfolio_balance):
+    """
+    Create a plot of the portfolio balance over time
+    :param portfolio_balance: a list of floats representing the portfolio balance over time
+    :return:
+    """
     portfolio_balance = pd.DataFrame(portfolio_balance, columns=['Balance'])
     portfolio_balance['50 day avg'] = portfolio_balance['Balance'].rolling(window=50).mean()
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -187,13 +192,7 @@ fnc = {
     "WR": calculate_wr
 }
 if __name__ == '__main__':
-    tickers = ['AAPL', 'MSFT']
-    indicators = ['RSI',]
-    start_year = 2010
-    holder = []
-    for ticker in tickers:
-        data = prep_data_calculate_indicators(ticker, indicators, start_year)
-        holder.append(data)
+    pass
 
 
 

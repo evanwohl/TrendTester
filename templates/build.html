@@ -144,6 +144,14 @@
             }
         }
     </style>
+    <script>
+document.querySelector('.btn').addEventListener('click', function() {
+    document.getElementById('loading').style.display = 'block';
+    setTimeout(function() {
+        document.getElementById('loading-message').textContent = 'Analyzing Results...';
+    }, 3000);  // Change the message after 3 seconds
+});
+    </script>
 </head>
 <body>
     <div class="container">
@@ -169,6 +177,9 @@
             <input type="number" name='start_year' placeholder="2008" required>
         </div>
         <button type="submit" class="btn">Test Strategy</button>
+        <div id="loading" style="display: none;">
+            <p> id="loading-message">Data being gathered...</p>
+        </div>
     </form>
     </div>
 
