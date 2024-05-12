@@ -1,6 +1,7 @@
 from datetime import datetime
-
-import waitress
+import signal
+import sys
+from waitress import serve
 from flask import Flask, render_template, request
 import logic
 
@@ -49,8 +50,10 @@ def build():
             final_investment_value = round(portfolio_value[-1], 2)
             num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
             if num_trades == 0:
+                ct = []
                 return render_template('results.html', plot_img=plot_img,
                                        roi=0, annualized_roi=0,
+                                       distribution_graph=logic.plot_pnl_distribution(ct),
                                        initial_investment=initial_investment,
                                        final_investment_value=final_investment_value,
                                        average_win=0,
@@ -95,6 +98,11 @@ def build():
             indicator: indicator_parameters[indicator] for indicator in indicators}
         return render_template('build.html',
                                indicators=selected_indicator_parameters)
+def signal_handler(signal, frame):
+    print('Shutting down the server...')
+    sys.exit(0)
+
 if __name__ == '__main__':
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=10000)
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    serve(app, host='0.0.0.0', port=8080)
