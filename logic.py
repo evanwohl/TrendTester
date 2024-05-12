@@ -158,81 +158,86 @@ def backtest_strategy(df, args, ticker):
     :param ticker: a string representing the stock ticker
     :return: a list of floats representing the portfolio balance over time
     """
-    df = df.dropna()
-    params = {}
-    so = False
-    macd = False
-    for arg in args:
-        if 'MACD' in arg:
-            macd = True
-        if 'Buy' in arg:
-            if 'SO' in arg:
-                so = True
-                params['%D'] = 1
-            else:
-                params[arg.split("_")[0]] = 1
-    if so:
-        args['%D_Buy'] = args['SO_Buy']
-        args['%D_Sell'] = args['SO_Sell']
-        del args['SO_Buy']
-        del args['SO_Sell']
-    balance = [100]
-    current_position = 0
-    balance_at_last_trade = 100
-    wins = []
-    losses = []
-    for index, row in df.iterrows():
-        if current_position > 0:
-            signal = True
-            if macd:
-                if row['MACD'] < row['Signal Line']:
-                    signal = False
-            if signal:
-                for param in params:
-                    signal_value = args[f"{param}_Sell"]
-                    value = int(signal_value[1:])
-                    if '>' in signal_value:
-                        if row[param] < value:
-                            signal = False
-                            break
-                    else:
-                        if row[param] > value:
-                            signal = False
-                            break
-            balance.append(row['Close'] * current_position)
-            if signal:
-                if row['Close'] * current_position > balance_at_last_trade:
-                    wins.append(row['Close'] * current_position - balance_at_last_trade)
+    try:
+        df = df.dropna()
+        params = {}
+        so = False
+        macd = False
+        for arg in args:
+            if 'MACD' in arg:
+                macd = True
+        for arg in args:
+            if 'Buy' in arg:
+                if 'SO' in arg:
+                    so = True
+                    params['%D'] = 1
                 else:
-                    losses.append(balance_at_last_trade - row['Close'] * current_position)
-                balance_at_last_trade = row['Close'] * current_position
-                current_position = 0
-        else:
-            signal = True
-            if macd:
-                if row['MACD'] > row['Signal Line']:
-                    signal = False
-            if signal:
-                for param in params:
-                    signal_value = args[f"{param}_Buy"]
-                    value = int(signal_value[1:])
-                    if '>' in signal_value:
-                        if row[param] < value:
-                            signal = False
-                            break
+                    params[arg.split("_")[0]] = 1
+        if so:
+            args['%D_Buy'] = args['SO_Buy']
+            args['%D_Sell'] = args['SO_Sell']
+            del args['SO_Buy']
+            del args['SO_Sell']
+        balance = [100]
+        current_position = 0
+        balance_at_last_trade = 100
+        wins = []
+        losses = []
+        for index, row in df.iterrows():
+            if current_position > 0:
+                signal = True
+                if macd:
+                    if row['MACD'] < row['Signal Line']:
+                        signal = False
+                if signal:
+                    for param in params:
+                        signal_value = args[f"{param}_Sell"]
+                        value = int(signal_value[1:])
+                        if '>' in signal_value:
+                            if row[param] < value:
+                                signal = False
+                                break
+                        else:
+                            if row[param] > value:
+                                signal = False
+                                break
+                balance.append(row['Close'] * current_position)
+                if signal:
+                    if row['Close'] * current_position > balance_at_last_trade:
+                        wins.append(row['Close'] * current_position - balance_at_last_trade)
                     else:
-                        if row[param] > value:
-                            signal = False
-                            break
-            balance.append(balance[-1])
-            if signal:
-                current_position = balance[-1] / row['Close']
-    if current_position > 0:
-        if balance_at_last_trade < balance[-1]:
-            wins.append(balance[-1] - balance_at_last_trade)
-        else:
-            losses.append(balance_at_last_trade - balance[-1])
-    return balance, wins, losses
+                        losses.append(balance_at_last_trade - row['Close'] * current_position)
+                    balance_at_last_trade = row['Close'] * current_position
+                    current_position = 0
+            else:
+                signal = True
+                if macd:
+                    if row['MACD'] > row['Signal Line']:
+                        signal = False
+                if signal:
+                    for param in params:
+                        signal_value = args[f"{param}_Buy"]
+                        value = int(signal_value[1:])
+                        if '>' in signal_value:
+                            if row[param] < value:
+                                signal = False
+                                break
+                        else:
+                            if row[param] > value:
+                                signal = False
+                                break
+                balance.append(balance[-1])
+                if signal:
+                    current_position = balance[-1] / row['Close']
+        if current_position > 0:
+            if balance_at_last_trade < balance[-1]:
+                wins.append(balance[-1] - balance_at_last_trade)
+            else:
+                losses.append(balance_at_last_trade - balance[-1])
+        return balance, wins, losses
+    except Exception as e:
+        print(e)
+        return [100], [], []
 
 def calculate_volatility(portfolio_balance):
     """

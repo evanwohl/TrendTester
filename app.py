@@ -1,4 +1,6 @@
 from datetime import datetime
+
+import waitress
 from flask import Flask, render_template, request
 import logic
 
@@ -45,10 +47,20 @@ def build():
             plot_img = logic.plot_results(portfolio_value)
             initial_investment = 100 * len(tickers)
             final_investment_value = round(portfolio_value[-1], 2)
+            num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
+            if num_trades == 0:
+                return render_template('results.html', plot_img=plot_img,
+                                       roi=0, annualized_roi=0,
+                                       initial_investment=initial_investment,
+                                       final_investment_value=final_investment_value,
+                                       average_win=0,
+                                       average_loss=0,
+                                       win_rate=0,
+                                       num_trades=0,
+                                       roi_class='positive')
             average_win = sum([sum(win) for win in wins]) / sum(len(win) for win in wins)
             average_loss = sum([sum(loss)for loss in losses]) / sum(len(loss) for loss in losses)
             win_rate = sum([len(win) for win in wins]) / (sum([len(win) for win in wins]) + sum([len(loss) for loss in losses]))
-            num_trades = sum([len(win) for win in wins]) + sum([len(loss) for loss in losses])
             wins_ct = [item for sublist in wins for item in sublist]
             losses_ct = [item for sublist in losses for item in sublist]
             ct = wins_ct + [-1 * loss for loss in losses_ct]
